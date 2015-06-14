@@ -17,6 +17,8 @@ import generator.TextGenerator;
 import static generator.TextGenerator.createNGram;
 import static generator.Tree.addNGramToTree;
 import static generator.Tree.checkWordsInDictionary;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -27,6 +29,15 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+
 
 /**
  *
@@ -48,7 +59,27 @@ public class Window extends javax.swing.JFrame {
     public static TreeSet treeSet = null;
     public static TreeSet treeDictionary = null;
     private static int rankOfN_gram = 2;
+    private String nGramLabel;
+    private int[] nGramCounts;
+    private Object jPanelLeft;
+    private Object jPanelRight;
     
+    public String getnGramLabel() {
+        return nGramLabel;
+    }
+
+    public void setnGramLabel(String nGramLabel) {
+        this.nGramLabel = nGramLabel;
+    }
+
+    public int[] getnGramCounts() {
+        return nGramCounts;
+    }
+
+    public void setnGramCounts(int[] nGramCounts) {
+        this.nGramCounts = nGramCounts;
+    }
+
 
     /**
      * Creates new form Window
@@ -69,6 +100,10 @@ public class Window extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        jMenu4 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         Quit = new java.awt.Button();
         jTabbedPane = new javax.swing.JTabbedPane();
         jPanelChat = new javax.swing.JPanel();
@@ -79,17 +114,35 @@ public class Window extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextAreaMy = new javax.swing.JTextArea();
         jPanelSettings = new javax.swing.JPanel();
+        jTextFieldRank = new javax.swing.JTextField();
+        jButtonChange = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jPanelStatistics = new javax.swing.JPanel();
+        jButtonFresh = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaNGramWords = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTextAreaSufiksWords = new javax.swing.JTextArea();
+        jPanelDiagramLeft = new javax.swing.JPanel();
+        jPanelDiagramRight = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItemOpen = new javax.swing.JMenuItem();
         jMenuItemAdd = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuHelp = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItemProgram = new javax.swing.JMenuItem();
         jMenuItemAuthor = new javax.swing.JMenuItem();
 
         jScrollPane1.setViewportView(jTextPane1);
+
+        jMenu3.setText("File");
+        jMenuBar2.add(jMenu3);
+
+        jMenu4.setText("Edit");
+        jMenuBar2.add(jMenu4);
+
+        jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -101,7 +154,10 @@ public class Window extends javax.swing.JFrame {
             }
         });
 
+        jTabbedPane.setPreferredSize(new java.awt.Dimension(580, 380));
+
         jPanelChat.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelChat.setPreferredSize(new java.awt.Dimension(570, 370));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/monitor/jul2.jpg"))); // NOI18N
         jLabel1.setText("jLabel1");
@@ -113,7 +169,7 @@ public class Window extends javax.swing.JFrame {
             }
         });
 
-        jTextPaneJulian.setForeground(new java.awt.Color(51, 204, 255));
+        jTextPaneJulian.setFont(new java.awt.Font("Segoe UI Symbol", 1, 18)); // NOI18N
         jScrollPane2.setViewportView(jTextPaneJulian);
 
         jTextAreaMy.setColumns(20);
@@ -125,64 +181,131 @@ public class Window extends javax.swing.JFrame {
         jPanelChatLayout.setHorizontalGroup(
             jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
                 .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelChatLayout.createSequentialGroup()
-                        .addContainerGap(402, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanelChatLayout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonSend, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(62, 62, 62))
-            .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
-                    .addContainerGap(30, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(279, Short.MAX_VALUE)))
         );
         jPanelChatLayout.setVerticalGroup(
             jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelChatLayout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanelChatLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(68, 68, 68)
-                        .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(36, Short.MAX_VALUE))
-            .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
-                    .addContainerGap(40, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(173, Short.MAX_VALUE)))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonSend, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Chat", jPanelChat);
+
+        jPanelSettings.setPreferredSize(new java.awt.Dimension(600, 400));
+
+        jTextFieldRank.setText("2");
+        jTextFieldRank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldRankActionPerformed(evt);
+            }
+        });
+
+        jButtonChange.setText("Change!");
+        jButtonChange.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonChangeActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Rank of ngram:");
 
         javax.swing.GroupLayout jPanelSettingsLayout = new javax.swing.GroupLayout(jPanelSettings);
         jPanelSettings.setLayout(jPanelSettingsLayout);
         jPanelSettingsLayout.setHorizontalGroup(
             jPanelSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
+            .addGroup(jPanelSettingsLayout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jTextFieldRank, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57)
+                .addComponent(jButtonChange, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanelSettingsLayout.setVerticalGroup(
             jPanelSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 297, Short.MAX_VALUE)
+            .addGroup(jPanelSettingsLayout.createSequentialGroup()
+                .addGap(85, 85, 85)
+                .addGroup(jPanelSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                    .addComponent(jButtonChange, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                    .addComponent(jTextFieldRank))
+                .addContainerGap(224, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Settings", jPanelSettings);
+
+        jButtonFresh.setText("Refresh");
+        jButtonFresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFreshActionPerformed(evt);
+            }
+        });
+
+        jTextAreaNGramWords.setColumns(20);
+        jTextAreaNGramWords.setRows(5);
+        jScrollPane3.setViewportView(jTextAreaNGramWords);
+
+        jTextAreaSufiksWords.setColumns(20);
+        jTextAreaSufiksWords.setRows(5);
+        jScrollPane5.setViewportView(jTextAreaSufiksWords);
+
+        jPanelDiagramLeft.setBackground(new java.awt.Color(153, 153, 153));
+        jPanelDiagramLeft.setLayout(new java.awt.BorderLayout());
+
+        jPanelDiagramRight.setBackground(new java.awt.Color(153, 153, 153));
+        jPanelDiagramRight.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout jPanelStatisticsLayout = new javax.swing.GroupLayout(jPanelStatistics);
         jPanelStatistics.setLayout(jPanelStatisticsLayout);
         jPanelStatisticsLayout.setHorizontalGroup(
             jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
+            .addGroup(jPanelStatisticsLayout.createSequentialGroup()
+                .addGroup(jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanelDiagramLeft, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanelDiagramRight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanelStatisticsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonFresh)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelStatisticsLayout.setVerticalGroup(
             jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 297, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelStatisticsLayout.createSequentialGroup()
+                .addGroup(jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanelDiagramRight, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                    .addComponent(jPanelDiagramLeft, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelStatisticsLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE))
+                    .addGroup(jPanelStatisticsLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                .addGap(14, 14, 14)
+                .addComponent(jButtonFresh)
+                .addContainerGap())
         );
 
         jTabbedPane.addTab("Statistics", jPanelStatistics);
@@ -198,6 +321,11 @@ public class Window extends javax.swing.JFrame {
         jMenu1.add(jMenuItemOpen);
 
         jMenuItemAdd.setText("Add file");
+        jMenuItemAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAddActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItemAdd);
 
         jMenuBar1.add(jMenu1);
@@ -207,10 +335,20 @@ public class Window extends javax.swing.JFrame {
 
         jMenuHelp.setText("About");
 
-        jMenuItem1.setText("Program");
-        jMenuHelp.add(jMenuItem1);
+        jMenuItemProgram.setText("Program");
+        jMenuItemProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemProgramActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemProgram);
 
         jMenuItemAuthor.setText("Author");
+        jMenuItemAuthor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAuthorActionPerformed(evt);
+            }
+        });
         jMenuHelp.add(jMenuItemAuthor);
 
         jMenuBar1.add(jMenuHelp);
@@ -225,12 +363,12 @@ public class Window extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Quit, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
-            .addComponent(jTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane)
+                .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Quit, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -259,7 +397,7 @@ public class Window extends javax.swing.JFrame {
             tempWords = ""+ jTextAreaMy.getText();
             newWords = newWords+ checkWordsInDictionary(treeDictionary, tempWords);
             addTextToBase("base/Base",null, "base", tempWords);
-            wordsIn = wordsIn + "\n" + "user:\n" + date + "\n" + jTextAreaMy.getText() + "\n";
+            wordsIn = wordsIn + "\n" + Entry.user+":\n" + date + "\n" + jTextAreaMy.getText() + "\n";
             jTextAreaMy.setText("");
             con = createWordsArray(con, "base/Base", arrayLength);
 
@@ -291,7 +429,7 @@ public class Window extends javax.swing.JFrame {
                 randInt = 0;
             }
             try {
-                wordsIn = wordsIn + "\n" + "computer:\n" + date + "\n" + n_gram[randInt].getPrefiks() + "\n";
+                wordsIn = wordsIn + "\n" + "Julian:\n" + date + "\n" + n_gram[randInt].getPrefiks() + "\n";
                 jTextPaneJulian.setText(wordsIn);
         } catch (NullPointerException npe) {
         }
@@ -325,13 +463,79 @@ public class Window extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
-                                           
+    private void jTextFieldRankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldRankActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldRankActionPerformed
 
-    private void jMenuItemAddActionPerformed(java.awt.event.ActionEvent evt) {                                             
+    private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
         Object source = evt.getSource();
-        if(source == jMenuItemAdd) {
+        if (jButtonChange == source) {
+            String tmp = jTextFieldRank.getText();
+            if (tmp != null) {
+                rankOfN_gram = Integer.parseInt(tmp);
+                Window.setRankOfN_gram(rankOfN_gram);
+            }
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonChangeActionPerformed
+
+    private void jButtonFreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFreshActionPerformed
+        org.jfree.data.category.DefaultCategoryDataset dateset = new org.jfree.data.category.DefaultCategoryDataset();
+        dateset.setValue(Window.getIndeksWordsInSettingsWindow()[0], "", "1");
+        dateset.setValue(Window.getIndeksWordsInSettingsWindow()[1], "", "2");
+        dateset.setValue(Window.getIndeksWordsInSettingsWindow()[2], "", "3");
+        dateset.setValue(Window.getIndeksWordsInSettingsWindow()[3], "", "4");
+        dateset.setValue(Window.getIndeksWordsInSettingsWindow()[4], "", "5");
+
+        org.jfree.data.category.DefaultCategoryDataset dateset2 = new org.jfree.data.category.DefaultCategoryDataset();
+        dateset2.setValue(Window.getIndeksWordsInSettingsWindow2()[0], "", "1");
+        dateset2.setValue(Window.getIndeksWordsInSettingsWindow2()[1], "", "2");
+        dateset2.setValue(Window.getIndeksWordsInSettingsWindow2()[2], "", "3");
+        dateset2.setValue(Window.getIndeksWordsInSettingsWindow2()[3], "", "4");
+        dateset2.setValue(Window.getIndeksWordsInSettingsWindow2()[4], "", "5");
+
+        JFreeChart chart = ChartFactory.createBarChart("Prefiks counts diagram", "", "", dateset, PlotOrientation.HORIZONTAL, false, false, false);
+        CategoryPlot catPlot = chart.getCategoryPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+
+        JFreeChart chart2 = ChartFactory.createBarChart("Sufiks counts diagram", "", "", dateset2, PlotOrientation.HORIZONTAL, false, false, false);
+        CategoryPlot catPlot2 = chart2.getCategoryPlot();
+        catPlot2.setRangeGridlinePaint(Color.BLACK);
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        jPanelDiagramLeft.removeAll();
+        jPanelDiagramLeft.add(chartPanel, BorderLayout.CENTER);
+        jPanelDiagramLeft.validate();
+
+        ChartPanel chartPanel2 = new ChartPanel(chart2);
+        jPanelDiagramRight.removeAll();
+        jPanelDiagramRight.add(chartPanel2, BorderLayout.CENTER);
+        jPanelDiagramRight.validate();
+
+        jTextAreaNGramWords.setText(Window.getWordsInSettingsWindow());
+
+        jTextAreaSufiksWords.setText(Window.getWordsInSettingsWindow2());
+
+
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonFreshActionPerformed
+
+    private void jMenuItemProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemProgramActionPerformed
+       JOptionPane.showMessageDialog(rootPane, "ChatMe v.1.0 \n 2015", "About the Program", WIDTH);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemProgramActionPerformed
+
+    private void jMenuItemAuthorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAuthorActionPerformed
+       JOptionPane.showMessageDialog(rootPane, "Marta Wiśniewska", "Author", WIDTH);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemAuthorActionPerformed
+
+    private void jMenuItemAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAddActionPerformed
+        Object source = evt.getSource();
+        if (source == jMenuItemAdd) {
             JFileChooser fileChoicer = new JFileChooser();
-            if(fileChoicer.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
+            if (fileChoicer.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChoicer.getSelectedFile();
                 String tmp = null;
                 try {
@@ -346,10 +550,12 @@ public class Window extends javax.swing.JFrame {
                 }
             }
             con = createWordsArray(con, "base/Base", arrayLength);
-            n_gram = TextGenerator.createNGram(n_gram, con, rankOfN_gram);
+            n_gram = createNGram(n_gram, con, rankOfN_gram);
         }
-        // TODO add your handling code here:
-    }   
+// TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemAddActionPerformed
+
+              
     public static void main(String args[]) {
      Window window = new Window();
         window.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -412,30 +618,60 @@ public class Window extends javax.swing.JFrame {
     public void setSendButton(JButton jButtonSend) {
         this.jButtonSend = jButtonSend;
     }
+    public JButton getjButtonRefresh() {
+        return jButtonFresh;
+    }
+    public void setjButtonRefresh(JButton jButtonFresh) {
+        this.jButtonFresh = jButtonFresh;
+    }
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button Quit;
+    private javax.swing.JButton jButtonChange;
+    private javax.swing.JButton jButtonFresh;
     private javax.swing.JButton jButtonSend;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JMenu jMenuHelp;
-    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemAdd;
     private javax.swing.JMenuItem jMenuItemAuthor;
     private javax.swing.JMenuItem jMenuItemOpen;
+    private javax.swing.JMenuItem jMenuItemProgram;
     private javax.swing.JPanel jPanelChat;
+    private javax.swing.JPanel jPanelDiagramLeft;
+    private javax.swing.JPanel jPanelDiagramRight;
     private javax.swing.JPanel jPanelSettings;
     private javax.swing.JPanel jPanelStatistics;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextArea jTextAreaMy;
+    private javax.swing.JTextArea jTextAreaNGramWords;
+    private javax.swing.JTextArea jTextAreaSufiksWords;
+    private javax.swing.JTextField jTextFieldRank;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPaneJulian;
     // End of variables declaration//GEN-END:variables
+
+    private static class DefaultCategoryDataset {
+
+        public DefaultCategoryDataset() {
+        }
+
+        private void setValue(int indeksWordsInSettingsWindow, String string, String string0) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
 }
