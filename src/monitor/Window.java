@@ -6,15 +6,17 @@
 package monitor;
 
 import container.Container;
+import static container.Container.createWordsArray;
 import static container.Reader.readFile;
-import container.WriteData;
 import static container.WriteData.addFileToBase;
+import static container.WriteData.addTextToBase;
+import static container.WriteData.saveFileToBase;
 import generator.Ngrams;
 import generator.Stats;
 import generator.TextGenerator;
 import static generator.TextGenerator.createNGram;
-import generator.Tree;
 import static generator.Tree.addNGramToTree;
+import static generator.Tree.checkWordsInDictionary;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -22,6 +24,7 @@ import java.util.Random;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -30,19 +33,22 @@ import javax.swing.JOptionPane;
  * @author Marta
  */
 public class Window extends javax.swing.JFrame {
-    private static final int[] arrayLength = new int[1];
-    private static container.Container[] con;
-    private String Base;
-    private static String newWords = "";
+    private static int[] arrayLength = new int[1];
+    private static int[] indeksWordsInSettingsWindow = new int[5];
+    private static int[] indeksWordsInSettingsWindow2 = new int[5];
     private static String wordsIn = "";
+    private static String wordsInInfo = "";
+    private static String newWords = "";
+    private static String wordsInSettingsWindow = "";
+    private static String wordsInSettingsWindow2 = "";
+    private static Container[] con;
+    private static Container[] dictionary;
+    private static TextGenerator[] textGen;
     private static Ngrams[] n_gram;
     public static TreeSet treeSet = null;
     public static TreeSet treeDictionary = null;
-    private static final int rankOfN_gram = 2;
-    private String wordsInSettingsWindow="";
-    private String wordsInSettingsWindow2="";
-    private int[] indeksWordsInSettingsWindow;
-    private int[] indeksWordsInSettingsWindow2;
+    private static int rankOfN_gram = 2;
+    
 
     /**
      * Creates new form Window
@@ -70,8 +76,8 @@ public class Window extends javax.swing.JFrame {
         jButtonSend = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPaneJulian = new javax.swing.JTextPane();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPaneMe = new javax.swing.JTextPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextAreaMy = new javax.swing.JTextArea();
         jPanelSettings = new javax.swing.JPanel();
         jPanelStatistics = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -110,7 +116,9 @@ public class Window extends javax.swing.JFrame {
         jTextPaneJulian.setForeground(new java.awt.Color(51, 204, 255));
         jScrollPane2.setViewportView(jTextPaneJulian);
 
-        jScrollPane3.setViewportView(jTextPaneMe);
+        jTextAreaMy.setColumns(20);
+        jTextAreaMy.setRows(5);
+        jScrollPane4.setViewportView(jTextAreaMy);
 
         javax.swing.GroupLayout jPanelChatLayout = new javax.swing.GroupLayout(jPanelChat);
         jPanelChat.setLayout(jPanelChatLayout);
@@ -119,12 +127,12 @@ public class Window extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
                 .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelChatLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap(402, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelChatLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                        .addGap(31, 31, 31)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 356, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(62, 62, 62))
             .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,19 +145,18 @@ public class Window extends javax.swing.JFrame {
             jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelChatLayout.createSequentialGroup()
                 .addGap(48, 48, 48)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(68, 68, 68)
-                .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanelChatLayout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(68, 68, 68)
+                        .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(36, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
             .addGroup(jPanelChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelChatLayout.createSequentialGroup()
                     .addContainerGap(40, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(159, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(173, Short.MAX_VALUE)))
         );
 
         jTabbedPane.addTab("Chat", jPanelChat);
@@ -191,11 +198,6 @@ public class Window extends javax.swing.JFrame {
         jMenu1.add(jMenuItemOpen);
 
         jMenuItemAdd.setText("Add file");
-        jMenuItemAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemAddActionPerformed(evt);
-            }
-        });
         jMenu1.add(jMenuItemAdd);
 
         jMenuBar1.add(jMenu1);
@@ -206,19 +208,9 @@ public class Window extends javax.swing.JFrame {
         jMenuHelp.setText("About");
 
         jMenuItem1.setText("Program");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
         jMenuHelp.add(jMenuItem1);
 
         jMenuItemAuthor.setText("Author");
-        jMenuItemAuthor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemAuthorActionPerformed(evt);
-            }
-        });
         jMenuHelp.add(jMenuItemAuthor);
 
         jMenuBar1.add(jMenuHelp);
@@ -264,10 +256,11 @@ public class Window extends javax.swing.JFrame {
             String tempWords;
             Date date = new Date();
             
-            tempWords = ""+ jTextPaneMe.getText();
-            newWords = ""+ Tree.checkWordsInDictionary(treeDictionary, tempWords);
-            wordsIn = wordsIn + "\n" + "user:\n" + date + "\n" + jTextPaneMe.getText() + "\n";
-            jTextPaneMe.setText("");
+            tempWords = ""+ jTextAreaMy.getText();
+            newWords = newWords+ checkWordsInDictionary(treeDictionary, tempWords);
+            addTextToBase("base/Base",null, "base", tempWords);
+            wordsIn = wordsIn + "\n" + "user:\n" + date + "\n" + jTextAreaMy.getText() + "\n";
+            jTextAreaMy.setText("");
             con = createWordsArray(con, "base/Base", arrayLength);
 
             try {
@@ -297,41 +290,44 @@ public class Window extends javax.swing.JFrame {
             } catch (IllegalArgumentException iae) {
                 randInt = 0;
             }
-
             try {
                 wordsIn = wordsIn + "\n" + "computer:\n" + date + "\n" + n_gram[randInt].getPrefiks() + "\n";
                 jTextPaneJulian.setText(wordsIn);
-            } catch (NullPointerException npe) {
-            }
+        } catch (NullPointerException npe) {
+        }
+        }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonSendActionPerformed
 
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
         Object source = evt.getSource();
-        if(source == jMenuItemOpen) {
+        if (source == jMenuItemOpen) {
             JFileChooser fileChoicer = new JFileChooser();
-            if(fileChoicer.showOpenDialog(null)==JFileChooser.APPROVE_OPTION) {
+            if(fileChoicer.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChoicer.getSelectedFile();
                 String tmp = null;
                 try {
-                    tmp = readFile(file.getAbsolutePath());
-                } catch (IOException ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                tmp = readFile(file.getAbsolutePath());
+                } catch(IOException ex2) {
+                     Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex2);
                 }
-      
+                
                 try {
-                    WriteData.saveFileToBase("base/Base", file, tmp, "base");
-                } catch (IOException ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                    saveFileToBase("base/Base", file, tmp, "base");
+                } catch (IOException ex1) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex1);
                 }
             }
             con = createWordsArray(con, "base/Base", arrayLength);
-            n_gram = TextGenerator.createNGram(n_gram, con, rankOfN_gram);
+            n_gram = createNGram(n_gram, con, rankOfN_gram);
         }
+        
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
-    private void jMenuItemAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAddActionPerformed
+                                           
+
+    private void jMenuItemAddActionPerformed(java.awt.event.ActionEvent evt) {                                             
         Object source = evt.getSource();
         if(source == jMenuItemAdd) {
             JFileChooser fileChoicer = new JFileChooser();
@@ -353,54 +349,71 @@ public class Window extends javax.swing.JFrame {
             n_gram = TextGenerator.createNGram(n_gram, con, rankOfN_gram);
         }
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItemAddActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        JOptionPane.showMessageDialog(rootPane, "Marta Wiśniewska","Author", WIDTH);
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jMenuItemAuthorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAuthorActionPerformed
-        JOptionPane.showMessageDialog(rootPane, "Marta Wiśniewska","Author", WIDTH);
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItemAuthorActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
+    }   
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Window.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Window.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Window.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Window.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-       
-        
+     Window window = new Window();
+        window.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        window.setVisible(true);
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Window().setVisible(true);
-            }
-        });
     }
+
+    public static int getRankOfN_gram() {
+        return rankOfN_gram;
+    }
+
+    public static void setRankOfN_gram(int rankOfN_gram) {
+        Window.rankOfN_gram = rankOfN_gram;
+    }
+
+    public static String getWordsInSettingsWindow() {
+        return wordsInSettingsWindow;
+    }
+
+    public static void setWordsInSettingsWindow(String wordsInSettingsWindow) {
+        Window.wordsInSettingsWindow = wordsInSettingsWindow;
+    }
+
+    public static int[] getIndeksWordsInSettingsWindow() {
+        return indeksWordsInSettingsWindow;
+    }
+
+    public static void setIndeksWordsInSettingsWindow(int[] indeksWordsInSettingsWindow) {
+        Window.indeksWordsInSettingsWindow = indeksWordsInSettingsWindow;
+    }
+
+    public static int[] getIndeksWordsInSettingsWindow2() {
+        return indeksWordsInSettingsWindow2;
+    }
+
+    public static void setIndeksWordsInSettingsWindow2(int[] indeksWordsInSettingsWindow2) {
+        Window.indeksWordsInSettingsWindow2 = indeksWordsInSettingsWindow2;
+    }
+
+    public static String getWordsInSettingsWindow2() {
+        return wordsInSettingsWindow2;
+    }
+
+    public static void setWordsInSettingsWindow2(String wordsInSettingsWindow2) {
+        Window.wordsInSettingsWindow2 = wordsInSettingsWindow2;
+    }
+
+    public static int[] getArrayLength() {
+        return arrayLength;
+    }
+
+    public static void setArrayLength(int[] arrayLength) {
+        Window.arrayLength = arrayLength;
+    }
+
+    public JButton getSendButton() {
+        return jButtonSend;
+    }
+
+    public void setSendButton(JButton jButtonSend) {
+        this.jButtonSend = jButtonSend;
+    }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button Quit;
@@ -419,18 +432,10 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelStatistics;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane;
+    private javax.swing.JTextArea jTextAreaMy;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTextPane jTextPaneJulian;
-    private javax.swing.JTextPane jTextPaneMe;
     // End of variables declaration//GEN-END:variables
-
-    private Container[] createWordsArray(NGrams[] n_gram, Container[] con, int rankOfN_gram) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private Container[] createWordsArray(Container[] con, String baseBase, int[] arrayLength) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
