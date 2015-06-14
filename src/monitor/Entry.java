@@ -11,21 +11,11 @@ package monitor;
  */
 public class Entry extends javax.swing.JFrame {
 
-    public String user;
+    public static String user="";
     public Object TextPaneName;
-    
-    
-    
-    public void setUser(String name) {
-        user = name();
-    }
-    
-    public String getUser (String user) {
-        return user;
-    }
+   
     
     public Entry() {
-        this.user = "Marta";
         initComponents();
     }
 
@@ -127,6 +117,7 @@ public class Entry extends javax.swing.JFrame {
         new Window().show();
         
         System.out.print(jTextPaneName.getText());
+        user = user + jTextPaneName.getText();
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonOKActionPerformed
 //    public String user = this.jTextPaneName.getText();
@@ -163,9 +154,7 @@ public class Entry extends javax.swing.JFrame {
                 new Entry().setVisible(true);
             }
 
-            private void setUser(String text) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+            
         });
     }
 
@@ -179,11 +168,4 @@ public class Entry extends javax.swing.JFrame {
     private javax.swing.JTextPane jTextPaneName;
     // End of variables declaration//GEN-END:variables
 
-    private String name() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    boolean getUser() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
